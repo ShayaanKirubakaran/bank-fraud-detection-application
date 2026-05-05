@@ -1,70 +1,72 @@
-import { useEffect, useState } from "react";
-import apiClient from "./api/apiClient";
+import { Routes, Route, Navigate, Link, useNavigate } from "react-router-dom";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import Dashboard from "./pages/Dashboard";
 import "./App.css";
 
-function App() {
-  const [transactions, setTransactions] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+function ProtectedRoute({ children }) {
+  const token = localStorage.getItem("token");
 
-  useEffect(() => {
-    async function fetchTransactions() {
-      try {
-        const response = await apiClient.get("/transactions/");
-        setTransactions(response.data);
-      } catch (err) {
-        setError("Could not load transactions from backend.");
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchTransactions();
-  }, []);
-
-  if (loading) {
-    return <h1>Loading transactions...</h1>;
+  if (!token) {
+    return <Navigate to="/login" />;
   }
 
-  if (error) {
-    return <h1>{error}</h1>;
+  return children;
+}
+
+function App() {
+  const navigate = useNavigate();
+  const token = localStorage.getItem("token");
+  const user = JSON.parse(localStorage.getItem("user"));
+
+  function handleLogout() {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    navigate("/login");
   }
 
   return (
-    <main style={{ padding: "2rem", fontFamily: "Arial" }}>
-      <h1>Bank Fraud Detection Application</h1>
-      <p>Frontend connected to Flask backend successfully.</p>
+    <>
+      <nav style={{ padding: "1rem", borderBottom: "1px solid #ddd" }}>
+        <Link to="/dashboard" style={{ marginRight: "1rem" }}>
+          Dashboard
+        </Link>
 
-      <h2>Transactions</h2>
+        {!token && (
+          <>
+            <Link to="/login" style={{ marginRight: "1rem" }}>
+              Login
+            </Link>
+            <Link to="/register">Register</Link>
+          </>
+        )}
 
-      <table border="1" cellPadding="10" style={{ borderCollapse: "collapse" }}>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Merchant</th>
-            <th>Category</th>
-            <th>Amount</th>
-            <th>Location</th>
-            <th>Risk</th>
-            <th>Fraud Score</th>
-          </tr>
-        </thead>
+        {token && (
+          <>
+            <span style={{ marginRight: "1rem" }}>
+              Logged in as {user?.full_name}
+            </span>
+            <button onClick={handleLogout}>Logout</button>
+          </>
+        )}
+      </nav>
 
-        <tbody>
-          {transactions.map((transaction) => (
-            <tr key={transaction.transaction_id}>
-              <td>{transaction.transaction_id}</td>
-              <td>{transaction.merchant_name}</td>
-              <td>{transaction.merchant_category}</td>
-              <td>${transaction.amount}</td>
-              <td>{transaction.transaction_location}</td>
-              <td>{transaction.risk_level}</td>
-              <td>{transaction.fraud_score}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </main>
+      <Routes>
+        <Route path="/" element={<Navigate to="/dashboard" />} />
+
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+      </Routes>
+    </>
   );
 }
 
