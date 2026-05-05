@@ -1,0 +1,30 @@
+# Python
+backend/venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Flask / environment
+backend/.env
+.env
+instance/
+*.db
+
+# Migrations cache
+backend/migrations/__pycache__/
+
+# Node / React
+frontend/node_modules/
+frontend/dist/
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# VS Code
+.vscode/
