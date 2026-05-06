@@ -5,6 +5,7 @@ function FraudAlerts() {
   const [alerts, setAlerts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
 
   async function fetchFraudAlerts() {
     try {
@@ -24,13 +25,48 @@ function FraudAlerts() {
     fetchFraudAlerts();
   }, []);
 
+  function handleAlertChange(alertId, field, value) {
+    setAlerts((currentAlerts) =>
+      currentAlerts.map((alert) =>
+        alert.alert_id === alertId
+          ? {
+              ...alert,
+              [field]: value,
+            }
+          : alert
+      )
+    );
+  }
+
+  async function handleSaveReview(alert) {
+    try {
+      setError("");
+      setSuccessMessage("");
+
+      await apiClient.put(`/fraud/alerts/${alert.alert_id}/review`, {
+        status: alert.status,
+        review_notes: alert.review_notes || "",
+        reviewed_by: 1,
+      });
+
+      setSuccessMessage(`Alert ${alert.alert_id} reviewed successfully.`);
+      fetchFraudAlerts();
+    } catch (err) {
+      setError("Could not save fraud alert review.");
+    }
+  }
+
   return (
     <main style={{ padding: "2rem", fontFamily: "Arial" }}>
       <h1>Fraud Alerts</h1>
-      <p>Review high-risk transactions automatically flagged by the fraud scoring engine.</p>
+      <p>
+        Review high-risk transactions automatically flagged by the fraud scoring
+        engine.
+      </p>
 
       {loading && <p>Loading fraud alerts...</p>}
       {error && <p style={{ color: "red" }}>{error}</p>}
+      {successMessage && <p style={{ color: "green" }}>{successMessage}</p>}
 
       {!loading && !error && (
         <>
@@ -55,7 +91,9 @@ function FraudAlerts() {
                   <th>Fraud Score</th>
                   <th>Reason</th>
                   <th>Status</th>
-                  <th>Created At</th>
+                  <th>Review Notes</th>
+                  <th>Reviewed At</th>
+                  <th>Action</th>
                 </tr>
               </thead>
 
@@ -70,8 +108,59 @@ function FraudAlerts() {
                     <td>{alert.transaction?.risk_level}</td>
                     <td>{alert.transaction?.fraud_score}</td>
                     <td>{alert.alert_reason}</td>
-                    <td>{alert.status}</td>
-                    <td>{new Date(alert.created_at).toLocaleString()}</td>
+
+                    <td>
+                      <select
+                        value={alert.status}
+                        onChange={(event) =>
+                          handleAlertChange(
+                            alert.alert_id,
+                            "status",
+                            event.target.value
+                          )
+                        }
+                        style={{ padding: "0.5rem" }}
+                      >
+                        <option value="pending">Pending</option>
+                        <option value="confirmed fraud">Confirmed Fraud</option>
+                        <option value="false positive">False Positive</option>
+                        <option value="resolved">Resolved</option>
+                      </select>
+                    </td>
+
+                    <td>
+                      <textarea
+                        value={alert.review_notes || ""}
+                        onChange={(event) =>
+                          handleAlertChange(
+                            alert.alert_id,
+                            "review_notes",
+                            event.target.value
+                          )
+                        }
+                        placeholder="Add review notes..."
+                        rows="3"
+                        style={{ width: "220px", padding: "0.5rem" }}
+                      />
+                    </td>
+
+                    <td>
+                      {alert.reviewed_at
+                        ? new Date(alert.reviewed_at).toLocaleString()
+                        : "Not reviewed"}
+                    </td>
+
+                    <td>
+                      <button
+                        onClick={() => handleSaveReview(alert)}
+                        style={{
+                          padding: "0.5rem 0.8rem",
+                          cursor: "pointer",
+                        }}
+                      >
+                        Save Review
+                      </button>
+                    </td>
                   </tr>
                 ))}
               </tbody>

@@ -1,5 +1,7 @@
-from flask import Blueprint, jsonify
+from flask import Blueprint, jsonify, request
+from app.extensions import db
 from app.models import FraudAlert, Transaction
+from datetime import datetime
 
 fraud_bp = Blueprint("fraud", __name__)
 
@@ -41,3 +43,32 @@ def get_fraud_alerts():
     alerts = FraudAlert.query.order_by(FraudAlert.created_at.desc()).all()
 
     return jsonify([fraud_alert_to_dict(alert) for alert in alerts])
+
+
+@fraud_bp.route("/alerts/<int:alert_id>/review", methods=["PUT"])
+def review_fraud_alert(alert_id):
+    alert = FraudAlert.query.get_or_404(alert_id)
+    data = request.get_json()
+
+    status = data.get("status")
+    review_notes = data.get("review_notes", "")
+    reviewed_by = data.get("reviewed_by")
+
+    allowed_statuses = ["pending", "confirmed fraud", "false positive", "resolved"]
+
+    if status not in allowed_statuses:
+        return jsonify({
+            "error": "Invalid status. Use pending, confirmed fraud, false positive, or resolved."
+        }), 400
+
+    alert.status = status
+    alert.review_notes = review_notes
+    alert.reviewed_by = reviewed_by
+    alert.reviewed_at = datetime.utcnow()
+
+    db.session.commit()
+
+    return jsonify({
+        "message": "Fraud alert reviewed successfully.",
+        "alert": fraud_alert_to_dict(alert)
+    })
