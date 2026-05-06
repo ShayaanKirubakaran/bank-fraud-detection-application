@@ -206,7 +206,6 @@ function Dashboard() {
 
   const transactionsByRisk = transactions.reduce((acc, transaction) => {
     const riskLevel = transaction.risk_level || "unknown";
-
     const existingRisk = acc.find((item) => item.risk === riskLevel);
 
     if (existingRisk) {
@@ -222,59 +221,94 @@ function Dashboard() {
   }, []);
 
   return (
-    <main style={{ padding: "2rem", fontFamily: "Arial" }}>
-      <h1>Bank Fraud Detection Application</h1>
-      <p>Dashboard connected to Flask backend successfully.</p>
-
-      <button
-        onClick={downloadTransactionsCsv}
-        style={{ padding: "0.7rem 1rem", marginBottom: "1rem" }}
+    <main>
+      <section
+        className="card-lg"
+        style={{
+          padding: "1.5rem",
+          marginBottom: "1.5rem",
+          background:
+            "linear-gradient(135deg, #ffffff 0%, #eef4ff 100%)",
+        }}
       >
-        Download Transactions CSV
-      </button>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            gap: "1rem",
+            flexWrap: "wrap",
+            alignItems: "center",
+          }}
+        >
+          <div>
+            <h1 className="page-title">Bank Fraud Detection Application</h1>
+            <p className="page-subtitle">
+              Monitor transactions, detect suspicious activity, and review fraud
+              alerts in one dashboard.
+            </p>
+          </div>
+
+          <button
+            onClick={downloadTransactionsCsv}
+            style={{ padding: "0.8rem 1.1rem" }}
+          >
+            Download Transactions CSV
+          </button>
+        </div>
+      </section>
 
       {summary && (
         <section
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
+            gridTemplateColumns: "repeat(auto-fit, minmax(190px, 1fr))",
             gap: "1rem",
-            margin: "1.5rem 0",
+            marginBottom: "1.5rem",
           }}
         >
-          <div style={{ padding: "1rem", border: "1px solid #ddd", borderRadius: "8px" }}>
-            <h3>Total Transactions</h3>
-            <p style={{ fontSize: "1.5rem", fontWeight: "bold" }}>
+          <div className="card" style={{ padding: "1.25rem" }}>
+            <p className="muted" style={{ margin: 0 }}>
+              Total Transactions
+            </p>
+            <h2 style={{ margin: "0.5rem 0 0" }}>
               {summary.total_transactions}
-            </p>
+            </h2>
           </div>
 
-          <div style={{ padding: "1rem", border: "1px solid #ddd", borderRadius: "8px" }}>
-            <h3>Total Spending</h3>
-            <p style={{ fontSize: "1.5rem", fontWeight: "bold" }}>
+          <div className="card" style={{ padding: "1.25rem" }}>
+            <p className="muted" style={{ margin: 0 }}>
+              Total Spending
+            </p>
+            <h2 style={{ margin: "0.5rem 0 0" }}>
               ${summary.total_spending.toFixed(2)}
-            </p>
+            </h2>
           </div>
 
-          <div style={{ padding: "1rem", border: "1px solid #ddd", borderRadius: "8px" }}>
-            <h3>High-Risk Transactions</h3>
-            <p style={{ fontSize: "1.5rem", fontWeight: "bold" }}>
+          <div className="card" style={{ padding: "1.25rem" }}>
+            <p className="muted" style={{ margin: 0 }}>
+              High-Risk Transactions
+            </p>
+            <h2 style={{ margin: "0.5rem 0 0" }}>
               {summary.high_risk_transactions}
-            </p>
+            </h2>
           </div>
 
-          <div style={{ padding: "1rem", border: "1px solid #ddd", borderRadius: "8px" }}>
-            <h3>Pending Fraud Alerts</h3>
-            <p style={{ fontSize: "1.5rem", fontWeight: "bold" }}>
+          <div className="card" style={{ padding: "1.25rem" }}>
+            <p className="muted" style={{ margin: 0 }}>
+              Pending Fraud Alerts
+            </p>
+            <h2 style={{ margin: "0.5rem 0 0" }}>
               {summary.pending_fraud_alerts}
-            </p>
+            </h2>
           </div>
 
-          <div style={{ padding: "1rem", border: "1px solid #ddd", borderRadius: "8px" }}>
-            <h3>Average Fraud Score</h3>
-            <p style={{ fontSize: "1.5rem", fontWeight: "bold" }}>
-              {summary.average_fraud_score}
+          <div className="card" style={{ padding: "1.25rem" }}>
+            <p className="muted" style={{ margin: 0 }}>
+              Average Fraud Score
             </p>
+            <h2 style={{ margin: "0.5rem 0 0" }}>
+              {summary.average_fraud_score}
+            </h2>
           </div>
         </section>
       )}
@@ -282,25 +316,18 @@ function Dashboard() {
       <section
         style={{
           display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(350px, 1fr))",
+          gridTemplateColumns: "repeat(auto-fit, minmax(360px, 1fr))",
           gap: "1.5rem",
-          marginBottom: "2rem",
+          marginBottom: "1.5rem",
         }}
       >
-        <div
-          style={{
-            padding: "1rem",
-            border: "1px solid #ddd",
-            borderRadius: "8px",
-            height: "350px",
-          }}
-        >
-          <h2>Spending by Category</h2>
+        <div className="card" style={{ padding: "1.25rem", height: "360px" }}>
+          <h2 style={{ marginTop: 0 }}>Spending by Category</h2>
 
           {spendingByCategory.length === 0 ? (
-            <p>No spending data available.</p>
+            <p className="muted">No spending data available.</p>
           ) : (
-            <ResponsiveContainer width="100%" height="85%">
+            <ResponsiveContainer width="100%" height="82%">
               <BarChart data={spendingByCategory}>
                 <XAxis dataKey="category" />
                 <YAxis />
@@ -311,20 +338,13 @@ function Dashboard() {
           )}
         </div>
 
-        <div
-          style={{
-            padding: "1rem",
-            border: "1px solid #ddd",
-            borderRadius: "8px",
-            height: "350px",
-          }}
-        >
-          <h2>Transactions by Risk Level</h2>
+        <div className="card" style={{ padding: "1.25rem", height: "360px" }}>
+          <h2 style={{ marginTop: 0 }}>Transactions by Risk Level</h2>
 
           {transactionsByRisk.length === 0 ? (
-            <p>No risk data available.</p>
+            <p className="muted">No risk data available.</p>
           ) : (
-            <ResponsiveContainer width="100%" height="85%">
+            <ResponsiveContainer width="100%" height="82%">
               <PieChart>
                 <Pie
                   data={transactionsByRisk}
@@ -345,260 +365,277 @@ function Dashboard() {
         </div>
       </section>
 
-      <h2>{editingTransactionId ? "Edit Transaction" : "Add New Transaction"}</h2>
+      <section className="form-card" style={{ marginBottom: "1.5rem" }}>
+        <h2 style={{ marginTop: 0 }}>
+          {editingTransactionId ? "Edit Transaction" : "Add New Transaction"}
+        </h2>
 
-      <form
-        onSubmit={handleCreateTransaction}
-        style={{
-          display: "grid",
-          gap: "1rem",
-          maxWidth: "700px",
-          marginBottom: "2rem",
-          padding: "1rem",
-          border: "1px solid #ddd",
-          borderRadius: "8px",
-        }}
-      >
-        <input
-          type="number"
-          name="amount"
-          placeholder="Amount"
-          value={newTransaction.amount}
-          onChange={handleNewTransactionChange}
-          required
-          style={{ padding: "0.5rem" }}
-        />
-
-        <input
-          type="text"
-          name="merchant_name"
-          placeholder="Merchant Name"
-          value={newTransaction.merchant_name}
-          onChange={handleNewTransactionChange}
-          required
-          style={{ padding: "0.5rem" }}
-        />
-
-        <input
-          type="text"
-          name="merchant_category"
-          placeholder="Merchant Category"
-          value={newTransaction.merchant_category}
-          onChange={handleNewTransactionChange}
-          required
-          style={{ padding: "0.5rem" }}
-        />
-
-        <input
-          type="text"
-          name="transaction_location"
-          placeholder="Transaction Location"
-          value={newTransaction.transaction_location}
-          onChange={handleNewTransactionChange}
-          required
-          style={{ padding: "0.5rem" }}
-        />
-
-        <input
-          type="datetime-local"
-          name="transaction_time"
-          value={newTransaction.transaction_time}
-          onChange={handleNewTransactionChange}
-          required
-          style={{ padding: "0.5rem" }}
-        />
-
-        <select
-          name="transaction_type"
-          value={newTransaction.transaction_type}
-          onChange={handleNewTransactionChange}
-          style={{ padding: "0.5rem" }}
+        <form
+          onSubmit={handleCreateTransaction}
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+            gap: "1rem",
+          }}
         >
-          <option value="purchase">Purchase</option>
-          <option value="transfer">Transfer</option>
-          <option value="withdrawal">Withdrawal</option>
-          <option value="deposit">Deposit</option>
-        </select>
+          <input
+            type="number"
+            name="amount"
+            placeholder="Amount"
+            value={newTransaction.amount}
+            onChange={handleNewTransactionChange}
+            required
+            style={{ padding: "0.75rem" }}
+          />
 
-        <select
-          name="risk_level"
-          value={newTransaction.risk_level}
-          onChange={handleNewTransactionChange}
-          style={{ padding: "0.5rem" }}
-        >
-          <option value="low">Low Risk</option>
-          <option value="medium">Medium Risk</option>
-          <option value="high">High Risk</option>
-        </select>
+          <input
+            type="text"
+            name="merchant_name"
+            placeholder="Merchant Name"
+            value={newTransaction.merchant_name}
+            onChange={handleNewTransactionChange}
+            required
+            style={{ padding: "0.75rem" }}
+          />
 
-        <input
-          type="number"
-          name="fraud_score"
-          placeholder="Fraud Score"
-          value={newTransaction.fraud_score}
-          onChange={handleNewTransactionChange}
-          min="0"
-          max="100"
-          style={{ padding: "0.5rem" }}
-        />
+          <input
+            type="text"
+            name="merchant_category"
+            placeholder="Merchant Category"
+            value={newTransaction.merchant_category}
+            onChange={handleNewTransactionChange}
+            required
+            style={{ padding: "0.75rem" }}
+          />
 
-        <div style={{ display: "flex", gap: "1rem" }}>
-          <button type="submit" style={{ padding: "0.7rem 1rem" }}>
-            {editingTransactionId ? "Save Changes" : "Add Transaction"}
-          </button>
+          <input
+            type="text"
+            name="transaction_location"
+            placeholder="Transaction Location"
+            value={newTransaction.transaction_location}
+            onChange={handleNewTransactionChange}
+            required
+            style={{ padding: "0.75rem" }}
+          />
 
-          {editingTransactionId && (
-            <button
-              type="button"
-              onClick={resetTransactionForm}
-              style={{ padding: "0.7rem 1rem" }}
-            >
-              Cancel Edit
-            </button>
-          )}
-        </div>
-      </form>
+          <input
+            type="datetime-local"
+            name="transaction_time"
+            value={newTransaction.transaction_time}
+            onChange={handleNewTransactionChange}
+            required
+            style={{ padding: "0.75rem" }}
+          />
 
-      <h2>Transaction Filters</h2>
-
-      <div
-        style={{
-          display: "flex",
-          gap: "1rem",
-          flexWrap: "wrap",
-          marginBottom: "1.5rem",
-        }}
-      >
-        <input
-          type="text"
-          placeholder="Search merchant..."
-          value={search}
-          onChange={(event) => setSearch(event.target.value)}
-          style={{ padding: "0.5rem", minWidth: "200px" }}
-        />
-
-        <select
-          value={risk}
-          onChange={(event) => setRisk(event.target.value)}
-          style={{ padding: "0.5rem" }}
-        >
-          <option value="">All Risks</option>
-          <option value="low">Low Risk</option>
-          <option value="medium">Medium Risk</option>
-          <option value="high">High Risk</option>
-        </select>
-
-        <select
-          value={category}
-          onChange={(event) => setCategory(event.target.value)}
-          style={{ padding: "0.5rem" }}
-        >
-          <option value="">All Categories</option>
-          <option value="Food">Food</option>
-          <option value="Groceries">Groceries</option>
-          <option value="Transportation">Transportation</option>
-          <option value="Transfer">Transfer</option>
-          <option value="Crypto">Crypto</option>
-          <option value="Shopping">Shopping</option>
-        </select>
-
-        <select
-          value={sort}
-          onChange={(event) => setSort(event.target.value)}
-          style={{ padding: "0.5rem" }}
-        >
-          <option value="date_desc">Newest First</option>
-          <option value="date_asc">Oldest First</option>
-          <option value="amount_desc">Amount: High to Low</option>
-          <option value="amount_asc">Amount: Low to High</option>
-          <option value="fraud_score_desc">Fraud Score: High to Low</option>
-          <option value="fraud_score_asc">Fraud Score: Low to High</option>
-        </select>
-
-        <button onClick={clearFilters} style={{ padding: "0.5rem 1rem" }}>
-          Clear Filters
-        </button>
-      </div>
-
-      <h2>Transactions</h2>
-
-      {loading && <p>Loading transactions...</p>}
-      {error && <p style={{ color: "red" }}>{error}</p>}
-
-      {!loading && !error && (
-        <>
-          <p>Total transactions shown: {transactions.length}</p>
-
-          <table
-            border="1"
-            cellPadding="10"
-            style={{ borderCollapse: "collapse", width: "100%" }}
+          <select
+            name="transaction_type"
+            value={newTransaction.transaction_type}
+            onChange={handleNewTransactionChange}
+            style={{ padding: "0.75rem" }}
           >
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Merchant</th>
-                <th>Category</th>
-                <th>Amount</th>
-                <th>Location</th>
-                <th>Risk</th>
-                <th>Fraud Score</th>
-                <th>Time</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
+            <option value="purchase">Purchase</option>
+            <option value="transfer">Transfer</option>
+            <option value="withdrawal">Withdrawal</option>
+            <option value="deposit">Deposit</option>
+          </select>
 
-            <tbody>
-              {transactions.map((transaction) => (
-                <tr key={transaction.transaction_id}>
-                  <td>{transaction.transaction_id}</td>
-                  <td>{transaction.merchant_name}</td>
-                  <td>{transaction.merchant_category}</td>
-                  <td>${transaction.amount}</td>
-                  <td>{transaction.transaction_location}</td>
-                  <td>
-                    <span className={`risk-badge risk-${transaction.risk_level}`}>
-                     {transaction.risk_level}
-                    </span>
-                  </td>
-                  <td>{transaction.fraud_score}</td>
-                  <td>
-                    {new Date(transaction.transaction_time).toLocaleString()}
-                  </td>
-                  <td>
-                    <button
-                      onClick={() => handleEditTransaction(transaction)}
-                      style={{
-                        padding: "0.4rem 0.7rem",
-                        cursor: "pointer",
-                        marginRight: "0.5rem",
-                      }}
-                    >
-                      Edit
-                    </button>
+          <select
+            name="risk_level"
+            value={newTransaction.risk_level}
+            onChange={handleNewTransactionChange}
+            style={{ padding: "0.75rem" }}
+          >
+            <option value="low">Low Risk</option>
+            <option value="medium">Medium Risk</option>
+            <option value="high">High Risk</option>
+          </select>
 
-                    <button
-                      onClick={() =>
-                        handleDeleteTransaction(transaction.transaction_id)
-                      }
-                      style={{
-                        padding: "0.4rem 0.7rem",
-                        cursor: "pointer",
-                      }}
-                    >
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <input
+            type="number"
+            name="fraud_score"
+            placeholder="Fraud Score"
+            value={newTransaction.fraud_score}
+            onChange={handleNewTransactionChange}
+            min="0"
+            max="100"
+            style={{ padding: "0.75rem" }}
+          />
 
-          {transactions.length === 0 && (
-            <p>No transactions match your current filters.</p>
-          )}
-        </>
-      )}
+          <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
+            <button type="submit" style={{ padding: "0.8rem 1rem" }}>
+              {editingTransactionId ? "Save Changes" : "Add Transaction"}
+            </button>
+
+            {editingTransactionId && (
+              <button
+                type="button"
+                onClick={resetTransactionForm}
+                style={{ padding: "0.8rem 1rem" }}
+              >
+                Cancel Edit
+              </button>
+            )}
+          </div>
+        </form>
+      </section>
+
+      <section className="form-card" style={{ marginBottom: "1.5rem" }}>
+        <h2 style={{ marginTop: 0 }}>Transaction Filters</h2>
+
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(190px, 1fr))",
+            gap: "1rem",
+          }}
+        >
+          <input
+            type="text"
+            placeholder="Search merchant..."
+            value={search}
+            onChange={(event) => setSearch(event.target.value)}
+            style={{ padding: "0.75rem" }}
+          />
+
+          <select
+            value={risk}
+            onChange={(event) => setRisk(event.target.value)}
+            style={{ padding: "0.75rem" }}
+          >
+            <option value="">All Risks</option>
+            <option value="low">Low Risk</option>
+            <option value="medium">Medium Risk</option>
+            <option value="high">High Risk</option>
+          </select>
+
+          <select
+            value={category}
+            onChange={(event) => setCategory(event.target.value)}
+            style={{ padding: "0.75rem" }}
+          >
+            <option value="">All Categories</option>
+            <option value="Food">Food</option>
+            <option value="Groceries">Groceries</option>
+            <option value="Transportation">Transportation</option>
+            <option value="Transfer">Transfer</option>
+            <option value="Crypto">Crypto</option>
+            <option value="Shopping">Shopping</option>
+          </select>
+
+          <select
+            value={sort}
+            onChange={(event) => setSort(event.target.value)}
+            style={{ padding: "0.75rem" }}
+          >
+            <option value="date_desc">Newest First</option>
+            <option value="date_asc">Oldest First</option>
+            <option value="amount_desc">Amount: High to Low</option>
+            <option value="amount_asc">Amount: Low to High</option>
+            <option value="fraud_score_desc">Fraud Score: High to Low</option>
+            <option value="fraud_score_asc">Fraud Score: Low to High</option>
+          </select>
+
+          <button onClick={clearFilters} style={{ padding: "0.75rem 1rem" }}>
+            Clear Filters
+          </button>
+        </div>
+      </section>
+
+      <section className="card-lg" style={{ padding: "1.25rem" }}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            gap: "1rem",
+            flexWrap: "wrap",
+            alignItems: "center",
+            marginBottom: "1rem",
+          }}
+        >
+          <div>
+            <h2 style={{ margin: 0 }}>Transactions</h2>
+            <p className="muted" style={{ marginBottom: 0 }}>
+              Total transactions shown: {transactions.length}
+            </p>
+          </div>
+        </div>
+
+        {loading && <p>Loading transactions...</p>}
+        {error && <p style={{ color: "red" }}>{error}</p>}
+
+        {!loading && !error && (
+          <>
+            <div className="table-wrapper">
+              <table cellPadding="12" style={{ width: "100%" }}>
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Merchant</th>
+                    <th>Category</th>
+                    <th>Amount</th>
+                    <th>Location</th>
+                    <th>Risk</th>
+                    <th>Fraud Score</th>
+                    <th>Time</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {transactions.map((transaction) => (
+                    <tr key={transaction.transaction_id}>
+                      <td>{transaction.transaction_id}</td>
+                      <td>{transaction.merchant_name}</td>
+                      <td>{transaction.merchant_category}</td>
+                      <td>${transaction.amount}</td>
+                      <td>{transaction.transaction_location}</td>
+                      <td>
+                        <span
+                          className={`risk-badge risk-${transaction.risk_level}`}
+                        >
+                          {transaction.risk_level}
+                        </span>
+                      </td>
+                      <td>{transaction.fraud_score}</td>
+                      <td>
+                        {new Date(
+                          transaction.transaction_time
+                        ).toLocaleString()}
+                      </td>
+                      <td>
+                        <button
+                          onClick={() => handleEditTransaction(transaction)}
+                          style={{
+                            padding: "0.45rem 0.75rem",
+                            marginRight: "0.5rem",
+                          }}
+                        >
+                          Edit
+                        </button>
+
+                        <button
+                          onClick={() =>
+                            handleDeleteTransaction(
+                              transaction.transaction_id
+                            )
+                          }
+                          style={{ padding: "0.45rem 0.75rem" }}
+                        >
+                          Delete
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {transactions.length === 0 && (
+              <p className="muted">No transactions match your current filters.</p>
+            )}
+          </>
+        )}
+      </section>
     </main>
   );
 }
