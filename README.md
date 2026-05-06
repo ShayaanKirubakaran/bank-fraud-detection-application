@@ -3,7 +3,7 @@
 ## Overview
 Bank Fraud Detection Application is a full stack fintech web application that analyzes banking transactions and flags suspicious activity using fraud risk scoring.
 
-The goal of this project is to build a realistic banking-style application where users can register, log in, view transactions, and eventually review suspicious transactions through fraud alerts and risk scores.
+The goal of this project is to build a realistic banking-style application where users can register, log in, view transactions, automatically score fraud risk, and review suspicious transactions through fraud alerts.
 
 ## Tech Stack
 - Frontend: React, Vite, Axios, React Router, Recharts
@@ -18,17 +18,26 @@ The goal of this project is to build a realistic banking-style application where
 - Database models for users, accounts, transactions, and fraud alerts
 - Database migrations using Flask-Migrate
 - Seed data for sample users, accounts, transactions, and fraud alerts
-- API endpoint to fetch all transactions
-- API endpoint to fetch a single transaction by ID
-- React dashboard displaying transaction data from the backend
 - User registration with password hashing
 - User login with JWT authentication
 - `/api/auth/me` route to verify logged-in users
-- React register page connected to Flask backend
-- React login page connected to Flask backend
 - JWT token stored in localStorage
 - Protected dashboard route
 - Logout functionality
+- React register and login pages connected to Flask backend
+- React dashboard displaying transaction data from the backend
+- Transaction search by merchant name
+- Transaction filtering by category and risk level
+- Transaction sorting by amount, date, and fraud score
+- Create, update, and delete transaction APIs
+- React dashboard create, edit, and delete transaction actions
+- Automatic fraud scoring for created and updated transactions
+- Automatic risk level classification
+- Automatic fraud alert creation for high-risk transactions
+- Fraud Alerts page displaying flagged transactions
+- Admin review workflow for fraud alerts
+- Fraud alert status updates: pending, confirmed fraud, false positive, resolved
+- Review notes and reviewed timestamp for fraud investigations
 
 ## API Routes Built So Far
 
@@ -39,6 +48,9 @@ The goal of this project is to build a realistic banking-style application where
 - `GET /api/transactions/test`
 - `GET /api/transactions/`
 - `GET /api/transactions/:id`
+- `POST /api/transactions/`
+- `PUT /api/transactions/:id`
+- `DELETE /api/transactions/:id`
 
 ### Authentication
 - `GET /api/auth/test`
@@ -46,20 +58,19 @@ The goal of this project is to build a realistic banking-style application where
 - `POST /api/auth/login`
 - `GET /api/auth/me`
 
+### Fraud
+- `GET /api/fraud/test`
+- `GET /api/fraud/alerts`
+- `PUT /api/fraud/alerts/:id/review`
+
 ## Planned Features
-- Transaction search and filtering
-- Transaction sorting
-- Create, update, and delete transaction APIs
-- Fraud scoring engine
-- Risk levels: low, medium, high
 - Dashboard summary cards
 - Spending charts
 - Fraud trend charts
-- Fraud alerts page
-- Admin review workflow
 - CSV export
 - Deployment with Vercel and Render/Railway
 - PostgreSQL production database
+- Optional machine learning fraud classification model
 
 ## Local Setup
 
