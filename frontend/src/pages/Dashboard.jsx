@@ -11,6 +11,8 @@ function Dashboard() {
   const [category, setCategory] = useState("");
   const [sort, setSort] = useState("date_desc");
 
+  const [editingTransactionId, setEditingTransactionId] = useState(null);
+
   const [newTransaction, setNewTransaction] = useState({
     account_id: 1,
     amount: "",
@@ -56,6 +58,22 @@ function Dashboard() {
     setSort("date_desc");
   }
 
+  function resetTransactionForm() {
+    setEditingTransactionId(null);
+
+    setNewTransaction({
+      account_id: 1,
+      amount: "",
+      merchant_name: "",
+      merchant_category: "",
+      transaction_location: "",
+      transaction_time: "",
+      transaction_type: "purchase",
+      fraud_score: 0,
+      risk_level: "low",
+    });
+  }
+
   function handleNewTransactionChange(event) {
     setNewTransaction({
       ...newTransaction,
@@ -67,30 +85,50 @@ function Dashboard() {
     event.preventDefault();
     setError("");
 
+    const transactionPayload = {
+      ...newTransaction,
+      account_id: Number(newTransaction.account_id),
+      amount: Number(newTransaction.amount),
+      fraud_score: Number(newTransaction.fraud_score),
+    };
+
     try {
-      await apiClient.post("/transactions/", {
-        ...newTransaction,
-        account_id: Number(newTransaction.account_id),
-        amount: Number(newTransaction.amount),
-        fraud_score: Number(newTransaction.fraud_score),
-      });
+      if (editingTransactionId) {
+        await apiClient.put(
+          `/transactions/${editingTransactionId}`,
+          transactionPayload
+        );
+      } else {
+        await apiClient.post("/transactions/", transactionPayload);
+      }
 
-      setNewTransaction({
-        account_id: 1,
-        amount: "",
-        merchant_name: "",
-        merchant_category: "",
-        transaction_location: "",
-        transaction_time: "",
-        transaction_type: "purchase",
-        fraud_score: 0,
-        risk_level: "low",
-      });
-
+      resetTransactionForm();
       fetchTransactions();
     } catch (err) {
-      setError("Could not create transaction.");
+      setError(
+        editingTransactionId
+          ? "Could not update transaction."
+          : "Could not create transaction."
+      );
     }
+  }
+
+  function handleEditTransaction(transaction) {
+    setEditingTransactionId(transaction.transaction_id);
+
+    setNewTransaction({
+      account_id: transaction.account_id,
+      amount: transaction.amount,
+      merchant_name: transaction.merchant_name,
+      merchant_category: transaction.merchant_category,
+      transaction_location: transaction.transaction_location,
+      transaction_time: transaction.transaction_time.slice(0, 16),
+      transaction_type: transaction.transaction_type,
+      fraud_score: transaction.fraud_score,
+      risk_level: transaction.risk_level,
+    });
+
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
   async function handleDeleteTransaction(transactionId) {
@@ -107,6 +145,10 @@ function Dashboard() {
 
       await apiClient.delete(`/transactions/${transactionId}`);
 
+      if (editingTransactionId === transactionId) {
+        resetTransactionForm();
+      }
+
       fetchTransactions();
     } catch (err) {
       setError("Could not delete transaction.");
@@ -118,7 +160,7 @@ function Dashboard() {
       <h1>Bank Fraud Detection Application</h1>
       <p>Dashboard connected to Flask backend successfully.</p>
 
-      <h2>Add New Transaction</h2>
+      <h2>{editingTransactionId ? "Edit Transaction" : "Add New Transaction"}</h2>
 
       <form
         onSubmit={handleCreateTransaction}
@@ -215,9 +257,21 @@ function Dashboard() {
           style={{ padding: "0.5rem" }}
         />
 
-        <button type="submit" style={{ padding: "0.7rem 1rem" }}>
-          Add Transaction
-        </button>
+        <div style={{ display: "flex", gap: "1rem" }}>
+          <button type="submit" style={{ padding: "0.7rem 1rem" }}>
+            {editingTransactionId ? "Save Changes" : "Add Transaction"}
+          </button>
+
+          {editingTransactionId && (
+            <button
+              type="button"
+              onClick={resetTransactionForm}
+              style={{ padding: "0.7rem 1rem" }}
+            >
+              Cancel Edit
+            </button>
+          )}
+        </div>
       </form>
 
       <h2>Transaction Filters</h2>
@@ -323,6 +377,17 @@ function Dashboard() {
                     {new Date(transaction.transaction_time).toLocaleString()}
                   </td>
                   <td>
+                    <button
+                      onClick={() => handleEditTransaction(transaction)}
+                      style={{
+                        padding: "0.4rem 0.7rem",
+                        cursor: "pointer",
+                        marginRight: "0.5rem",
+                      }}
+                    >
+                      Edit
+                    </button>
+
                     <button
                       onClick={() =>
                         handleDeleteTransaction(transaction.transaction_id)
