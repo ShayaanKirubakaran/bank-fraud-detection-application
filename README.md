@@ -1,8 +1,9 @@
 # Bank Fraud Detection Application
 
 ## Live Demo
-- Frontend: `https://bank-fraud-detection-application.vercel.app`
-- Backend API: `https://bank-fraud-detection-application.onrender.com`
+- [Frontend Live App](https://bank-fraud-detection-application.vercel.app)
+- [Backend API](https://bank-fraud-detection-application.onrender.com)
+- [Backend Dashboard Summary Test](https://bank-fraud-detection-application.onrender.com/api/dashboard/summary)
 
 ## Overview
 Bank Fraud Detection Application is a full stack fintech web application that analyzes banking transactions and flags suspicious activity using fraud risk scoring.
