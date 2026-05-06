@@ -11,6 +11,18 @@ function Dashboard() {
   const [category, setCategory] = useState("");
   const [sort, setSort] = useState("date_desc");
 
+  const [newTransaction, setNewTransaction] = useState({
+    account_id: 1,
+    amount: "",
+    merchant_name: "",
+    merchant_category: "",
+    transaction_location: "",
+    transaction_time: "",
+    transaction_type: "purchase",
+    fraud_score: 0,
+    risk_level: "low",
+  });
+
   async function fetchTransactions() {
     try {
       setLoading(true);
@@ -44,10 +56,169 @@ function Dashboard() {
     setSort("date_desc");
   }
 
+  function handleNewTransactionChange(event) {
+    setNewTransaction({
+      ...newTransaction,
+      [event.target.name]: event.target.value,
+    });
+  }
+
+  async function handleCreateTransaction(event) {
+    event.preventDefault();
+    setError("");
+
+    try {
+      await apiClient.post("/transactions/", {
+        ...newTransaction,
+        account_id: Number(newTransaction.account_id),
+        amount: Number(newTransaction.amount),
+        fraud_score: Number(newTransaction.fraud_score),
+      });
+
+      setNewTransaction({
+        account_id: 1,
+        amount: "",
+        merchant_name: "",
+        merchant_category: "",
+        transaction_location: "",
+        transaction_time: "",
+        transaction_type: "purchase",
+        fraud_score: 0,
+        risk_level: "low",
+      });
+
+      fetchTransactions();
+    } catch (err) {
+      setError("Could not create transaction.");
+    }
+  }
+
+  async function handleDeleteTransaction(transactionId) {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this transaction?"
+    );
+
+    if (!confirmDelete) {
+      return;
+    }
+
+    try {
+      setError("");
+
+      await apiClient.delete(`/transactions/${transactionId}`);
+
+      fetchTransactions();
+    } catch (err) {
+      setError("Could not delete transaction.");
+    }
+  }
+
   return (
     <main style={{ padding: "2rem", fontFamily: "Arial" }}>
       <h1>Bank Fraud Detection Application</h1>
       <p>Dashboard connected to Flask backend successfully.</p>
+
+      <h2>Add New Transaction</h2>
+
+      <form
+        onSubmit={handleCreateTransaction}
+        style={{
+          display: "grid",
+          gap: "1rem",
+          maxWidth: "700px",
+          marginBottom: "2rem",
+          padding: "1rem",
+          border: "1px solid #ddd",
+          borderRadius: "8px",
+        }}
+      >
+        <input
+          type="number"
+          name="amount"
+          placeholder="Amount"
+          value={newTransaction.amount}
+          onChange={handleNewTransactionChange}
+          required
+          style={{ padding: "0.5rem" }}
+        />
+
+        <input
+          type="text"
+          name="merchant_name"
+          placeholder="Merchant Name"
+          value={newTransaction.merchant_name}
+          onChange={handleNewTransactionChange}
+          required
+          style={{ padding: "0.5rem" }}
+        />
+
+        <input
+          type="text"
+          name="merchant_category"
+          placeholder="Merchant Category"
+          value={newTransaction.merchant_category}
+          onChange={handleNewTransactionChange}
+          required
+          style={{ padding: "0.5rem" }}
+        />
+
+        <input
+          type="text"
+          name="transaction_location"
+          placeholder="Transaction Location"
+          value={newTransaction.transaction_location}
+          onChange={handleNewTransactionChange}
+          required
+          style={{ padding: "0.5rem" }}
+        />
+
+        <input
+          type="datetime-local"
+          name="transaction_time"
+          value={newTransaction.transaction_time}
+          onChange={handleNewTransactionChange}
+          required
+          style={{ padding: "0.5rem" }}
+        />
+
+        <select
+          name="transaction_type"
+          value={newTransaction.transaction_type}
+          onChange={handleNewTransactionChange}
+          style={{ padding: "0.5rem" }}
+        >
+          <option value="purchase">Purchase</option>
+          <option value="transfer">Transfer</option>
+          <option value="withdrawal">Withdrawal</option>
+          <option value="deposit">Deposit</option>
+        </select>
+
+        <select
+          name="risk_level"
+          value={newTransaction.risk_level}
+          onChange={handleNewTransactionChange}
+          style={{ padding: "0.5rem" }}
+        >
+          <option value="low">Low Risk</option>
+          <option value="medium">Medium Risk</option>
+          <option value="high">High Risk</option>
+        </select>
+
+        <input
+          type="number"
+          name="fraud_score"
+          placeholder="Fraud Score"
+          value={newTransaction.fraud_score}
+          onChange={handleNewTransactionChange}
+          min="0"
+          max="100"
+          style={{ padding: "0.5rem" }}
+        />
+
+        <button type="submit" style={{ padding: "0.7rem 1rem" }}>
+          Add Transaction
+        </button>
+      </form>
 
       <h2>Transaction Filters</h2>
 
@@ -134,6 +305,7 @@ function Dashboard() {
                 <th>Risk</th>
                 <th>Fraud Score</th>
                 <th>Time</th>
+                <th>Actions</th>
               </tr>
             </thead>
 
@@ -147,7 +319,22 @@ function Dashboard() {
                   <td>{transaction.transaction_location}</td>
                   <td>{transaction.risk_level}</td>
                   <td>{transaction.fraud_score}</td>
-                  <td>{new Date(transaction.transaction_time).toLocaleString()}</td>
+                  <td>
+                    {new Date(transaction.transaction_time).toLocaleString()}
+                  </td>
+                  <td>
+                    <button
+                      onClick={() =>
+                        handleDeleteTransaction(transaction.transaction_id)
+                      }
+                      style={{
+                        padding: "0.4rem 0.7rem",
+                        cursor: "pointer",
+                      }}
+                    >
+                      Delete
+                    </button>
+                  </td>
                 </tr>
               ))}
             </tbody>
