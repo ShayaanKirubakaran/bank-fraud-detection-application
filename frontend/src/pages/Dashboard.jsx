@@ -3,6 +3,7 @@ import apiClient from "../api/apiClient";
 
 function Dashboard() {
   const [transactions, setTransactions] = useState([]);
+  const [summary, setSummary] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -47,8 +48,18 @@ function Dashboard() {
     }
   }
 
+  async function fetchDashboardSummary() {
+    try {
+      const response = await apiClient.get("/dashboard/summary");
+      setSummary(response.data);
+    } catch (err) {
+      setError("Could not load dashboard summary.");
+    }
+  }
+
   useEffect(() => {
     fetchTransactions();
+    fetchDashboardSummary();
   }, [search, risk, category, sort]);
 
   function clearFilters() {
@@ -104,6 +115,7 @@ function Dashboard() {
 
       resetTransactionForm();
       fetchTransactions();
+      fetchDashboardSummary();
     } catch (err) {
       setError(
         editingTransactionId
@@ -150,6 +162,7 @@ function Dashboard() {
       }
 
       fetchTransactions();
+      fetchDashboardSummary();
     } catch (err) {
       setError("Could not delete transaction.");
     }
@@ -159,6 +172,82 @@ function Dashboard() {
     <main style={{ padding: "2rem", fontFamily: "Arial" }}>
       <h1>Bank Fraud Detection Application</h1>
       <p>Dashboard connected to Flask backend successfully.</p>
+
+      {summary && (
+        <section
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
+            gap: "1rem",
+            margin: "1.5rem 0",
+          }}
+        >
+          <div
+            style={{
+              padding: "1rem",
+              border: "1px solid #ddd",
+              borderRadius: "8px",
+            }}
+          >
+            <h3>Total Transactions</h3>
+            <p style={{ fontSize: "1.5rem", fontWeight: "bold" }}>
+              {summary.total_transactions}
+            </p>
+          </div>
+
+          <div
+            style={{
+              padding: "1rem",
+              border: "1px solid #ddd",
+              borderRadius: "8px",
+            }}
+          >
+            <h3>Total Spending</h3>
+            <p style={{ fontSize: "1.5rem", fontWeight: "bold" }}>
+              ${summary.total_spending.toFixed(2)}
+            </p>
+          </div>
+
+          <div
+            style={{
+              padding: "1rem",
+              border: "1px solid #ddd",
+              borderRadius: "8px",
+            }}
+          >
+            <h3>High-Risk Transactions</h3>
+            <p style={{ fontSize: "1.5rem", fontWeight: "bold" }}>
+              {summary.high_risk_transactions}
+            </p>
+          </div>
+
+          <div
+            style={{
+              padding: "1rem",
+              border: "1px solid #ddd",
+              borderRadius: "8px",
+            }}
+          >
+            <h3>Pending Fraud Alerts</h3>
+            <p style={{ fontSize: "1.5rem", fontWeight: "bold" }}>
+              {summary.pending_fraud_alerts}
+            </p>
+          </div>
+
+          <div
+            style={{
+              padding: "1rem",
+              border: "1px solid #ddd",
+              borderRadius: "8px",
+            }}
+          >
+            <h3>Average Fraud Score</h3>
+            <p style={{ fontSize: "1.5rem", fontWeight: "bold" }}>
+              {summary.average_fraud_score}
+            </p>
+          </div>
+        </section>
+      )}
 
       <h2>{editingTransactionId ? "Edit Transaction" : "Add New Transaction"}</h2>
 
