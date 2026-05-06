@@ -1,6 +1,7 @@
 from flask import Blueprint, jsonify, request
 from app.extensions import db
 from app.models import Transaction
+from app.services.fraud_scoring import calculate_fraud_score
 from datetime import datetime
 
 transaction_bp = Blueprint("transactions", __name__)
@@ -17,7 +18,7 @@ def transaction_to_dict(transaction):
         "transaction_time": transaction.transaction_time.isoformat(),
         "transaction_type": transaction.transaction_type,
         "fraud_score": transaction.fraud_score,
-        "risk_level": transaction.risk_level
+        "risk_level": transaction.risk_level,
     }
 
 
@@ -76,7 +77,7 @@ def create_transaction():
         "merchant_name",
         "merchant_category",
         "transaction_location",
-        "transaction_time"
+        "transaction_time",
     ]
 
     for field in required_fields:
@@ -94,16 +95,28 @@ def create_transaction():
             transaction_location=data["transaction_location"],
             transaction_time=transaction_time,
             transaction_type=data.get("transaction_type", "purchase"),
-            fraud_score=data.get("fraud_score", 0),
-            risk_level=data.get("risk_level", "low")
+            fraud_score=0,
+            risk_level="low",
         )
 
         db.session.add(new_transaction)
+        db.session.flush()
+
+        user_transactions = Transaction.query.filter_by(
+            account_id=new_transaction.account_id
+        ).all()
+
+        fraud_result = calculate_fraud_score(new_transaction, user_transactions)
+
+        new_transaction.fraud_score = fraud_result["score"]
+        new_transaction.risk_level = fraud_result["risk_level"]
+
         db.session.commit()
 
         return jsonify({
             "message": "Transaction created successfully.",
-            "transaction": transaction_to_dict(new_transaction)
+            "transaction": transaction_to_dict(new_transaction),
+            "fraud_reasons": fraud_result["reasons"],
         }), 201
 
     except ValueError:
@@ -146,17 +159,21 @@ def update_transaction(transaction_id):
     if "transaction_type" in data:
         transaction.transaction_type = data["transaction_type"]
 
-    if "fraud_score" in data:
-        transaction.fraud_score = data["fraud_score"]
+    user_transactions = Transaction.query.filter_by(
+        account_id=transaction.account_id
+    ).all()
 
-    if "risk_level" in data:
-        transaction.risk_level = data["risk_level"]
+    fraud_result = calculate_fraud_score(transaction, user_transactions)
+
+    transaction.fraud_score = fraud_result["score"]
+    transaction.risk_level = fraud_result["risk_level"]
 
     db.session.commit()
 
     return jsonify({
         "message": "Transaction updated successfully.",
-        "transaction": transaction_to_dict(transaction)
+        "transaction": transaction_to_dict(transaction),
+        "fraud_reasons": fraud_result["reasons"],
     })
 
 
