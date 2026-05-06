@@ -556,7 +556,11 @@ function Dashboard() {
                   <td>{transaction.merchant_category}</td>
                   <td>${transaction.amount}</td>
                   <td>{transaction.transaction_location}</td>
-                  <td>{transaction.risk_level}</td>
+                  <td>
+                    <span className={`risk-badge risk-${transaction.risk_level}`}>
+                     {transaction.risk_level}
+                    </span>
+                  </td>
                   <td>{transaction.fraud_score}</td>
                   <td>
                     {new Date(transaction.transaction_time).toLocaleString()}

@@ -63,6 +63,7 @@ function FraudAlerts() {
   return (
     <main style={{ padding: "2rem", fontFamily: "Arial" }}>
       <h1>Fraud Alerts</h1>
+
       <p>
         Review high-risk transactions automatically flagged by the fraud scoring
         engine.
@@ -116,27 +117,48 @@ function FraudAlerts() {
                     <td>${alert.transaction?.amount}</td>
                     <td>{alert.transaction?.merchant_category}</td>
                     <td>{alert.transaction?.transaction_location}</td>
-                    <td>{alert.transaction?.risk_level}</td>
+
+                    <td>
+                      <span
+                        className={`risk-badge risk-${alert.transaction?.risk_level}`}
+                      >
+                        {alert.transaction?.risk_level}
+                      </span>
+                    </td>
+
                     <td>{alert.transaction?.fraud_score}</td>
                     <td>{alert.alert_reason}</td>
 
                     <td>
-                      <select
-                        value={alert.status}
-                        onChange={(event) =>
-                          handleAlertChange(
-                            alert.alert_id,
-                            "status",
-                            event.target.value
-                          )
-                        }
-                        style={{ padding: "0.5rem" }}
-                      >
-                        <option value="pending">Pending</option>
-                        <option value="confirmed fraud">Confirmed Fraud</option>
-                        <option value="false positive">False Positive</option>
-                        <option value="resolved">Resolved</option>
-                      </select>
+                      <div style={{ display: "grid", gap: "0.5rem" }}>
+                        <span
+                          className={`status-badge status-${alert.status.replaceAll(
+                            " ",
+                            "-"
+                          )}`}
+                        >
+                          {alert.status}
+                        </span>
+
+                        <select
+                          value={alert.status}
+                          onChange={(event) =>
+                            handleAlertChange(
+                              alert.alert_id,
+                              "status",
+                              event.target.value
+                            )
+                          }
+                          style={{ padding: "0.5rem" }}
+                        >
+                          <option value="pending">Pending</option>
+                          <option value="confirmed fraud">
+                            Confirmed Fraud
+                          </option>
+                          <option value="false positive">False Positive</option>
+                          <option value="resolved">Resolved</option>
+                        </select>
+                      </div>
                     </td>
 
                     <td>
