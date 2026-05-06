@@ -1,5 +1,17 @@
 import { useEffect, useState } from "react";
 import apiClient from "../api/apiClient";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+  Legend,
+} from "recharts";
 
 function Dashboard() {
   const [transactions, setTransactions] = useState([]);
@@ -168,6 +180,43 @@ function Dashboard() {
     }
   }
 
+  const spendingByCategory = transactions.reduce((acc, transaction) => {
+    const categoryName = transaction.merchant_category || "Other";
+    const amount = Number(transaction.amount);
+
+    const existingCategory = acc.find(
+      (item) => item.category === categoryName
+    );
+
+    if (existingCategory) {
+      existingCategory.total += amount;
+    } else {
+      acc.push({
+        category: categoryName,
+        total: amount,
+      });
+    }
+
+    return acc;
+  }, []);
+
+  const transactionsByRisk = transactions.reduce((acc, transaction) => {
+    const riskLevel = transaction.risk_level || "unknown";
+
+    const existingRisk = acc.find((item) => item.risk === riskLevel);
+
+    if (existingRisk) {
+      existingRisk.count += 1;
+    } else {
+      acc.push({
+        risk: riskLevel,
+        count: 1,
+      });
+    }
+
+    return acc;
+  }, []);
+
   return (
     <main style={{ padding: "2rem", fontFamily: "Arial" }}>
       <h1>Bank Fraud Detection Application</h1>
@@ -182,65 +231,35 @@ function Dashboard() {
             margin: "1.5rem 0",
           }}
         >
-          <div
-            style={{
-              padding: "1rem",
-              border: "1px solid #ddd",
-              borderRadius: "8px",
-            }}
-          >
+          <div style={{ padding: "1rem", border: "1px solid #ddd", borderRadius: "8px" }}>
             <h3>Total Transactions</h3>
             <p style={{ fontSize: "1.5rem", fontWeight: "bold" }}>
               {summary.total_transactions}
             </p>
           </div>
 
-          <div
-            style={{
-              padding: "1rem",
-              border: "1px solid #ddd",
-              borderRadius: "8px",
-            }}
-          >
+          <div style={{ padding: "1rem", border: "1px solid #ddd", borderRadius: "8px" }}>
             <h3>Total Spending</h3>
             <p style={{ fontSize: "1.5rem", fontWeight: "bold" }}>
               ${summary.total_spending.toFixed(2)}
             </p>
           </div>
 
-          <div
-            style={{
-              padding: "1rem",
-              border: "1px solid #ddd",
-              borderRadius: "8px",
-            }}
-          >
+          <div style={{ padding: "1rem", border: "1px solid #ddd", borderRadius: "8px" }}>
             <h3>High-Risk Transactions</h3>
             <p style={{ fontSize: "1.5rem", fontWeight: "bold" }}>
               {summary.high_risk_transactions}
             </p>
           </div>
 
-          <div
-            style={{
-              padding: "1rem",
-              border: "1px solid #ddd",
-              borderRadius: "8px",
-            }}
-          >
+          <div style={{ padding: "1rem", border: "1px solid #ddd", borderRadius: "8px" }}>
             <h3>Pending Fraud Alerts</h3>
             <p style={{ fontSize: "1.5rem", fontWeight: "bold" }}>
               {summary.pending_fraud_alerts}
             </p>
           </div>
 
-          <div
-            style={{
-              padding: "1rem",
-              border: "1px solid #ddd",
-              borderRadius: "8px",
-            }}
-          >
+          <div style={{ padding: "1rem", border: "1px solid #ddd", borderRadius: "8px" }}>
             <h3>Average Fraud Score</h3>
             <p style={{ fontSize: "1.5rem", fontWeight: "bold" }}>
               {summary.average_fraud_score}
@@ -248,6 +267,72 @@ function Dashboard() {
           </div>
         </section>
       )}
+
+      <section
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(350px, 1fr))",
+          gap: "1.5rem",
+          marginBottom: "2rem",
+        }}
+      >
+        <div
+          style={{
+            padding: "1rem",
+            border: "1px solid #ddd",
+            borderRadius: "8px",
+            height: "350px",
+          }}
+        >
+          <h2>Spending by Category</h2>
+
+          {spendingByCategory.length === 0 ? (
+            <p>No spending data available.</p>
+          ) : (
+            <ResponsiveContainer width="100%" height="85%">
+              <BarChart data={spendingByCategory}>
+                <XAxis dataKey="category" />
+                <YAxis />
+                <Tooltip />
+                <Bar dataKey="total" />
+              </BarChart>
+            </ResponsiveContainer>
+          )}
+        </div>
+
+        <div
+          style={{
+            padding: "1rem",
+            border: "1px solid #ddd",
+            borderRadius: "8px",
+            height: "350px",
+          }}
+        >
+          <h2>Transactions by Risk Level</h2>
+
+          {transactionsByRisk.length === 0 ? (
+            <p>No risk data available.</p>
+          ) : (
+            <ResponsiveContainer width="100%" height="85%">
+              <PieChart>
+                <Pie
+                  data={transactionsByRisk}
+                  dataKey="count"
+                  nameKey="risk"
+                  outerRadius={100}
+                  label
+                >
+                  {transactionsByRisk.map((entry, index) => (
+                    <Cell key={`cell-${index}`} />
+                  ))}
+                </Pie>
+                <Tooltip />
+                <Legend />
+              </PieChart>
+            </ResponsiveContainer>
+          )}
+        </div>
+      </section>
 
       <h2>{editingTransactionId ? "Edit Transaction" : "Add New Transaction"}</h2>
 
