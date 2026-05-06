@@ -20,6 +20,9 @@ def create_app():
     from app.routes.auth_routes import auth_bp
     app.register_blueprint(auth_bp, url_prefix="/api/auth")
 
+    from app.routes.fraud_routes import fraud_bp
+    app.register_blueprint(fraud_bp, url_prefix="/api/fraud")
+
     @app.route("/")
     def home():
         return {"message": "Bank Fraud Detection Application API is running"}

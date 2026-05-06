@@ -2,6 +2,7 @@ import { Routes, Route, Navigate, Link, useNavigate } from "react-router-dom";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
+import FraudAlerts from "./pages/FraudAlerts";
 import "./App.css";
 
 function ProtectedRoute({ children }) {
@@ -32,6 +33,12 @@ function App() {
           Dashboard
         </Link>
 
+        {token && (
+          <Link to="/fraud-alerts" style={{ marginRight: "1rem" }}>
+            Fraud Alerts
+          </Link>
+        )}
+
         {!token && (
           <>
             <Link to="/login" style={{ marginRight: "1rem" }}>
@@ -59,6 +66,15 @@ function App() {
           element={
             <ProtectedRoute>
               <Dashboard />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/fraud-alerts"
+          element={
+            <ProtectedRoute>
+              <FraudAlerts />
             </ProtectedRoute>
           }
         />

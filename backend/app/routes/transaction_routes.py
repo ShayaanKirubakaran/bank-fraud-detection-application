@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request
 from app.extensions import db
-from app.models import Transaction
+from app.models import Transaction, FraudAlert
 from app.services.fraud_scoring import calculate_fraud_score
 from datetime import datetime
 
@@ -20,6 +20,28 @@ def transaction_to_dict(transaction):
         "fraud_score": transaction.fraud_score,
         "risk_level": transaction.risk_level,
     }
+
+def create_or_update_fraud_alert(transaction, fraud_reasons):
+    existing_alert = FraudAlert.query.filter_by(
+        transaction_id=transaction.transaction_id
+    ).first()
+
+    alert_reason = "; ".join(fraud_reasons) if fraud_reasons else "High-risk transaction detected."
+
+    if transaction.risk_level == "high":
+        if existing_alert:
+            existing_alert.alert_reason = alert_reason
+            existing_alert.status = "pending"
+        else:
+            new_alert = FraudAlert(
+                transaction_id=transaction.transaction_id,
+                alert_reason=alert_reason,
+                status="pending"
+            )
+            db.session.add(new_alert)
+    else:
+        if existing_alert and existing_alert.status == "pending":
+            db.session.delete(existing_alert)
 
 
 @transaction_bp.route("/test", methods=["GET"])
@@ -111,6 +133,8 @@ def create_transaction():
         new_transaction.fraud_score = fraud_result["score"]
         new_transaction.risk_level = fraud_result["risk_level"]
 
+        create_or_update_fraud_alert(new_transaction, fraud_result["reasons"])
+
         db.session.commit()
 
         return jsonify({
@@ -168,7 +192,10 @@ def update_transaction(transaction_id):
     transaction.fraud_score = fraud_result["score"]
     transaction.risk_level = fraud_result["risk_level"]
 
+    create_or_update_fraud_alert(transaction, fraud_result["reasons"])
+
     db.session.commit()
+
 
     return jsonify({
         "message": "Transaction updated successfully.",
