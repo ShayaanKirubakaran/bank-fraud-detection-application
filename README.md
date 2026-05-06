@@ -3,7 +3,7 @@
 ## Overview
 Bank Fraud Detection Application is a full stack fintech web application that analyzes banking transactions and flags suspicious activity using fraud risk scoring.
 
-The goal of this project is to build a realistic banking-style application where users can register, log in, view transactions, automatically score fraud risk, review suspicious transactions through fraud alerts, and visualize banking activity through dashboard analytics.
+The goal of this project is to build a realistic banking-style application where users can register, log in, view transactions, automatically score fraud risk, review suspicious transactions through fraud alerts, export reports, and visualize banking activity through dashboard analytics.
 
 ## Tech Stack
 - Frontend: React, Vite, Axios, React Router, Recharts
@@ -12,6 +12,7 @@ The goal of this project is to build a realistic banking-style application where
 - Database: SQLite for local development, PostgreSQL planned for production
 - Data Analysis: pandas
 - Charts: Recharts
+- Exporting: CSV
 
 ## Current Features
 - Flask backend setup
@@ -42,6 +43,9 @@ The goal of this project is to build a realistic banking-style application where
 - Dashboard summary cards for total transactions, total spending, high-risk transactions, pending fraud alerts, and average fraud score
 - Spending by category bar chart using Recharts
 - Transactions by risk level pie chart using Recharts
+- CSV export for transactions
+- CSV export for fraud alerts
+- Frontend download buttons for transaction and fraud alert reports
 
 ## API Routes Built So Far
 
@@ -70,6 +74,10 @@ The goal of this project is to build a realistic banking-style application where
 ### Dashboard
 - `GET /api/dashboard/summary`
 
+### Export
+- `GET /api/export/transactions-csv`
+- `GET /api/export/fraud-alerts-csv`
+
 ## Project Structure
 
 ```text
@@ -86,6 +94,7 @@ bank-fraud-detection-application/
 │   │   ├── routes/
 │   │   │   ├── auth_routes.py
 │   │   │   ├── dashboard_routes.py
+│   │   │   ├── export_routes.py
 │   │   │   ├── fraud_routes.py
 │   │   │   └── transaction_routes.py
 │   │   │
