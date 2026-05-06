@@ -3,7 +3,7 @@
 ## Overview
 Bank Fraud Detection Application is a full stack fintech web application that analyzes banking transactions and flags suspicious activity using fraud risk scoring.
 
-The goal of this project is to build a realistic banking-style application where users can register, log in, view transactions, automatically score fraud risk, and review suspicious transactions through fraud alerts.
+The goal of this project is to build a realistic banking-style application where users can register, log in, view transactions, automatically score fraud risk, review suspicious transactions through fraud alerts, and visualize banking activity through dashboard analytics.
 
 ## Tech Stack
 - Frontend: React, Vite, Axios, React Router, Recharts
@@ -11,6 +11,7 @@ The goal of this project is to build a realistic banking-style application where
 - Authentication: bcrypt, JWT
 - Database: SQLite for local development, PostgreSQL planned for production
 - Data Analysis: pandas
+- Charts: Recharts
 
 ## Current Features
 - Flask backend setup
@@ -38,6 +39,9 @@ The goal of this project is to build a realistic banking-style application where
 - Admin review workflow for fraud alerts
 - Fraud alert status updates: pending, confirmed fraud, false positive, resolved
 - Review notes and reviewed timestamp for fraud investigations
+- Dashboard summary cards for total transactions, total spending, high-risk transactions, pending fraud alerts, and average fraud score
+- Spending by category bar chart using Recharts
+- Transactions by risk level pie chart using Recharts
 
 ## API Routes Built So Far
 
@@ -63,23 +67,59 @@ The goal of this project is to build a realistic banking-style application where
 - `GET /api/fraud/alerts`
 - `PUT /api/fraud/alerts/:id/review`
 
-## Planned Features
-- Dashboard summary cards
-- Spending charts
-- Fraud trend charts
-- CSV export
-- Deployment with Vercel and Render/Railway
-- PostgreSQL production database
-- Optional machine learning fraud classification model
+### Dashboard
+- `GET /api/dashboard/summary`
 
-## Local Setup
+## Project Structure
 
-### Backend
-
-```bash
-cd backend
-python -m venv venv
-venv\Scripts\activate
-pip install -r requirements.txt
-python seed.py
-python run.py
+```text
+bank-fraud-detection-application/
+│
+├── backend/
+│   ├── app/
+│   │   ├── models/
+│   │   │   ├── user.py
+│   │   │   ├── account.py
+│   │   │   ├── transaction.py
+│   │   │   └── fraud_alert.py
+│   │   │
+│   │   ├── routes/
+│   │   │   ├── auth_routes.py
+│   │   │   ├── dashboard_routes.py
+│   │   │   ├── fraud_routes.py
+│   │   │   └── transaction_routes.py
+│   │   │
+│   │   ├── services/
+│   │   │   └── fraud_scoring.py
+│   │   │
+│   │   ├── utils/
+│   │   │   └── seed_data.py
+│   │   │
+│   │   ├── __init__.py
+│   │   ├── config.py
+│   │   └── extensions.py
+│   │
+│   ├── migrations/
+│   ├── requirements.txt
+│   ├── run.py
+│   └── seed.py
+│
+├── frontend/
+│   ├── src/
+│   │   ├── api/
+│   │   │   └── apiClient.js
+│   │   │
+│   │   ├── pages/
+│   │   │   ├── Dashboard.jsx
+│   │   │   ├── FraudAlerts.jsx
+│   │   │   ├── Login.jsx
+│   │   │   └── Register.jsx
+│   │   │
+│   │   ├── App.jsx
+│   │   ├── main.jsx
+│   │   └── index.css
+│   │
+│   └── package.json
+│
+├── README.md
+└── .gitignore
