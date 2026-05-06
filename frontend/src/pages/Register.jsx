@@ -43,61 +43,120 @@ function Register() {
   }
 
   return (
-    <main style={{ padding: "2rem", fontFamily: "Arial", maxWidth: "500px" }}>
-      <h1>Register</h1>
-      <p>Create an account for the Bank Fraud Detection Application.</p>
-
-      {message && <p style={{ color: "green" }}>{message}</p>}
-      {error && <p style={{ color: "red" }}>{error}</p>}
-
-      <form onSubmit={handleSubmit}>
-        <div style={{ marginBottom: "1rem" }}>
-          <label>Full Name</label>
-          <br />
-          <input
-            type="text"
-            name="full_name"
-            value={formData.full_name}
-            onChange={handleChange}
-            required
-            style={{ width: "100%", padding: "0.5rem" }}
-          />
+    <main
+      style={{
+        minHeight: "calc(100vh - 80px)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: "2rem",
+      }}
+    >
+      <section
+        className="card-lg"
+        style={{
+          width: "100%",
+          maxWidth: "500px",
+          padding: "2rem",
+        }}
+      >
+        <div style={{ marginBottom: "1.5rem" }}>
+          <h1 className="page-title" style={{ marginBottom: "0.5rem" }}>
+            Create Account
+          </h1>
+          <p className="page-subtitle" style={{ marginBottom: 0 }}>
+            Register to start monitoring transactions and fraud alerts.
+          </p>
         </div>
 
-        <div style={{ marginBottom: "1rem" }}>
-          <label>Email</label>
-          <br />
-          <input
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            required
-            style={{ width: "100%", padding: "0.5rem" }}
-          />
-        </div>
+        {message && (
+          <div
+            style={{
+              background: "#dcfce7",
+              color: "#166534",
+              padding: "0.8rem",
+              borderRadius: "8px",
+              marginBottom: "1rem",
+              fontWeight: "600",
+            }}
+          >
+            {message}
+          </div>
+        )}
 
-        <div style={{ marginBottom: "1rem" }}>
-          <label>Password</label>
-          <br />
-          <input
-            type="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            required
-            style={{ width: "100%", padding: "0.5rem" }}
-          />
-        </div>
+        {error && (
+          <div
+            style={{
+              background: "#fee2e2",
+              color: "#991b1b",
+              padding: "0.8rem",
+              borderRadius: "8px",
+              marginBottom: "1rem",
+              fontWeight: "600",
+            }}
+          >
+            {error}
+          </div>
+        )}
 
-        <button type="submit" style={{ padding: "0.6rem 1rem" }}>
-          Register
-        </button>
-      </form>
+        <form onSubmit={handleSubmit}>
+          <div style={{ marginBottom: "1rem" }}>
+            <label style={{ fontWeight: "700", display: "block", marginBottom: "0.4rem" }}>
+              Full Name
+            </label>
+            <input
+              type="text"
+              name="full_name"
+              placeholder="Your full name"
+              value={formData.full_name}
+              onChange={handleChange}
+              required
+              style={{ width: "100%", padding: "0.85rem" }}
+            />
+          </div>
 
-      <p>
-        Already have an account? <Link to="/login">Login here</Link>
-      </p>
+          <div style={{ marginBottom: "1rem" }}>
+            <label style={{ fontWeight: "700", display: "block", marginBottom: "0.4rem" }}>
+              Email
+            </label>
+            <input
+              type="email"
+              name="email"
+              placeholder="you@example.com"
+              value={formData.email}
+              onChange={handleChange}
+              required
+              style={{ width: "100%", padding: "0.85rem" }}
+            />
+          </div>
+
+          <div style={{ marginBottom: "1.25rem" }}>
+            <label style={{ fontWeight: "700", display: "block", marginBottom: "0.4rem" }}>
+              Password
+            </label>
+            <input
+              type="password"
+              name="password"
+              placeholder="Create a password"
+              value={formData.password}
+              onChange={handleChange}
+              required
+              style={{ width: "100%", padding: "0.85rem" }}
+            />
+          </div>
+
+          <button type="submit" style={{ width: "100%", padding: "0.9rem 1rem" }}>
+            Register
+          </button>
+        </form>
+
+        <p className="muted" style={{ marginTop: "1.25rem", textAlign: "center" }}>
+          Already have an account?{" "}
+          <Link to="/login" style={{ color: "#2563eb", fontWeight: "700" }}>
+            Login here
+          </Link>
+        </p>
+      </section>
     </main>
   );
 }
