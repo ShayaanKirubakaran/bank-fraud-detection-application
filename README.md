@@ -1,7 +1,7 @@
 # Bank Fraud Detection Application
 
 ## Live Demo
-- Frontend: `[https://your-vercel-url.vercel.app](https://bank-fraud-detection-application.vercel.app)`
+- Frontend: `https://bank-fraud-detection-application.vercel.app`
 - Backend API: `https://bank-fraud-detection-application.onrender.com`
 
 ## Overview
