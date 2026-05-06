@@ -1,5 +1,9 @@
 # Bank Fraud Detection Application
 
+## Live Demo
+- Frontend: `https://your-vercel-url.vercel.app`
+- Backend API: `https://bank-fraud-detection-application.onrender.com`
+
 ## Overview
 Bank Fraud Detection Application is a full stack fintech web application that analyzes banking transactions and flags suspicious activity using fraud risk scoring.
 
@@ -9,10 +13,11 @@ The goal of this project is to build a realistic banking-style application where
 - Frontend: React, Vite, Axios, React Router, Recharts
 - Backend: Python, Flask, Flask-SQLAlchemy, Flask-Migrate, Flask-CORS
 - Authentication: bcrypt, JWT
-- Database: SQLite for local development, PostgreSQL planned for production
+- Database: SQLite for local development, Render-hosted database for deployment
 - Data Analysis: pandas
 - Charts: Recharts
 - Exporting: CSV
+- Deployment: Vercel frontend, Render backend
 
 ## Current Features
 - Flask backend setup
@@ -46,6 +51,8 @@ The goal of this project is to build a realistic banking-style application where
 - CSV export for transactions
 - CSV export for fraud alerts
 - Frontend download buttons for transaction and fraud alert reports
+- Professional UI styling with cards, tables, badges, and responsive layout
+- Deployed frontend and backend
 
 ## API Routes Built So Far
 
@@ -125,9 +132,11 @@ bank-fraud-detection-application/
 │   │   │   └── Register.jsx
 │   │   │
 │   │   ├── App.jsx
+│   │   ├── App.css
 │   │   ├── main.jsx
 │   │   └── index.css
 │   │
+│   ├── vercel.json
 │   └── package.json
 │
 ├── README.md
