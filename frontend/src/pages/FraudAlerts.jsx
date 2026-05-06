@@ -25,6 +25,10 @@ function FraudAlerts() {
     fetchFraudAlerts();
   }, []);
 
+  function downloadFraudAlertsCsv() {
+    window.open("http://127.0.0.1:5000/api/export/fraud-alerts-csv", "_blank");
+  }
+
   function handleAlertChange(alertId, field, value) {
     setAlerts((currentAlerts) =>
       currentAlerts.map((alert) =>
@@ -63,6 +67,13 @@ function FraudAlerts() {
         Review high-risk transactions automatically flagged by the fraud scoring
         engine.
       </p>
+
+      <button
+        onClick={downloadFraudAlertsCsv}
+        style={{ padding: "0.7rem 1rem", marginBottom: "1rem" }}
+      >
+        Download Fraud Alerts CSV
+      </button>
 
       {loading && <p>Loading fraud alerts...</p>}
       {error && <p style={{ color: "red" }}>{error}</p>}

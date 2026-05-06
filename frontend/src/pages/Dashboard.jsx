@@ -74,6 +74,10 @@ function Dashboard() {
     fetchDashboardSummary();
   }, [search, risk, category, sort]);
 
+  function downloadTransactionsCsv() {
+    window.open("http://127.0.0.1:5000/api/export/transactions-csv", "_blank");
+  }
+
   function clearFilters() {
     setSearch("");
     setRisk("");
@@ -221,6 +225,13 @@ function Dashboard() {
     <main style={{ padding: "2rem", fontFamily: "Arial" }}>
       <h1>Bank Fraud Detection Application</h1>
       <p>Dashboard connected to Flask backend successfully.</p>
+
+      <button
+        onClick={downloadTransactionsCsv}
+        style={{ padding: "0.7rem 1rem", marginBottom: "1rem" }}
+      >
+        Download Transactions CSV
+      </button>
 
       {summary && (
         <section
