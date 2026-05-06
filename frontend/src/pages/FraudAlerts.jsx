@@ -26,7 +26,10 @@ function FraudAlerts() {
   }, []);
 
   function downloadFraudAlertsCsv() {
-    window.open("http://127.0.0.1:5000/api/export/fraud-alerts-csv", "_blank");
+    window.open(
+        `${import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:5000/api"}/export/fraud-alerts-csv`,
+        "_blank"
+    );
   }
 
   function handleAlertChange(alertId, field, value) {
